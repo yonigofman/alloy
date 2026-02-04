@@ -23,10 +23,11 @@ type JSONTarget struct {
 
 // Config configures the JSON integration.
 type Config struct {
-	JSONConfigFile     string       `yaml:"config_file,omitempty"`
-	JSONTargets        []JSONTarget `yaml:"json_targets"`
-	JSONConfig         util.RawYAML `yaml:"json_config,omitempty"`
-	ProbeTimeoutOffset float64      `yaml:"probe_timeout_offset,omitempty"` // in seconds
+	JSONConfigFile     string              `yaml:"config_file,omitempty"`
+	JSONTargets        []JSONTarget        `yaml:"json_targets"`
+	JSONConfig         util.RawYAML        `yaml:"json_config,omitempty"`
+	JSONModules        *json_config.Config `yaml:"-"`                              // Used for struct-based config to avoid secret marshaling issues
+	ProbeTimeoutOffset float64             `yaml:"probe_timeout_offset,omitempty"` // in seconds
 }
 
 // UnmarshalYAML implements yaml.Unmarshaler for Config.

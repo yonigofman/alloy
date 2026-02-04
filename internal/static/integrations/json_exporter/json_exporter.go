@@ -89,12 +89,15 @@ func loadFile(filename string) (*json_config.Config, error) {
 
 // New creates a new json_exporter integration
 func New(log log.Logger, c *Config) (integrations.Integration, error) {
-	if c.JSONConfigFile == "" && c.JSONConfig == nil {
+	if c.JSONConfigFile == "" && c.JSONConfig == nil && c.JSONModules == nil {
 		return nil, fmt.Errorf("failed to load json config; no config file or config block provided")
 	}
 
 	var modules json_config.Config
-	if c.JSONConfig != nil {
+	// If we have struct-based config (from native Alloy component), use it directly.
+	if c.JSONModules != nil {
+		modules = *c.JSONModules
+	} else if c.JSONConfig != nil {
 		if err := yaml.Unmarshal(c.JSONConfig, &modules); err != nil {
 			return nil, err
 		}

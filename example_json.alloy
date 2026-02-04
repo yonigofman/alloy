@@ -1,15 +1,30 @@
 prometheus.exporter.json "example" {
-	config = "modules:\n  default:\n    metrics:\n      - name: app_info\n        type: object\n        path: '{.items}'\n        help: 'App status info'\n        labels:\n          app_name: '{.app_name}'\n          health_status: '{.health_status}'\n          sync_status: '{.sync_status}'\n          namespace: '{.namespace}'\n        values:\n          info: '{1}'\n"
+	url = "http://localhost:8080/metrics.json"
 
-	target {
-		name    = "example"
-		address = "http://localhost:8080/metrics.json"
+	// Mapping pattern: emit ONE series per item in an array
+	mapping {
+		array {
+			items_path = ".items[*]"
+
+			metric {
+				name   = "app_info"
+				type   = "gauge"
+				value  = 1
+				labels = {
+					app_name      = ".app_name",
+					health_status = ".health_status",
+					sync_status   = ".sync_status",
+					namespace     = ".namespace",
+				}
+			}
+		}
 	}
 }
 
 prometheus.scrape "json_example" {
-	targets    = prometheus.exporter.json.example.targets
-	forward_to = [prometheus.remote_write.default.receiver]
+	scrape_interval = "11s"
+	targets         = prometheus.exporter.json.example.targets
+	forward_to      = [prometheus.remote_write.default.receiver]
 }
 
 prometheus.remote_write "default" {

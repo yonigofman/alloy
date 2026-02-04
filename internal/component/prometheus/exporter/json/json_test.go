@@ -4,92 +4,157 @@ import (
 	"testing"
 	"time"
 
-	"github.com/grafana/alloy/internal/static/integrations/json_exporter"
-	"github.com/grafana/alloy/internal/util"
 	"github.com/grafana/alloy/syntax"
-	"github.com/grafana/alloy/syntax/alloytypes"
 	"github.com/stretchr/testify/require"
+
+	json_config "github.com/prometheus-community/json_exporter/config"
 )
 
 func TestAlloyUnmarshal(t *testing.T) {
 	alloyConfig := `
-		config = "modules:\n  default:\n    metrics:\n      - name: example\n        path: '{ .counter }'\n"
-		target {
-			name    = "example"
-			address = "http://localhost:8080/metrics.json"
+		url = "http://api.example.com"
+		timeout = "10s"
+		
+		client {
+			headers = { "X-Test" = "test" }
+			basic_auth {
+				username = "user"
+				password = "password"
+			}
 		}
-		probe_timeout_offset = "1s"
+
+		static_labels = { "env" = "prod" }
+
+		mapping {
+			metric {
+				name = "simple_metric"
+				type = "gauge"
+				value_path = ".value"
+			}
+			array {
+				items_path = ".items[*]"
+				metric {
+					name = "item_info"
+					type = "gauge"
+					value = 1
+					labels = { "name" = ".name" }
+				}
+			}
+		}
 	`
 	var args Arguments
 	err := syntax.Unmarshal([]byte(alloyConfig), &args)
 	require.NoError(t, err)
 
 	expected := Arguments{
-		Config: alloytypes.OptionalSecret{
-			Value: "modules:\n  default:\n    metrics:\n      - name: example\n        path: '{ .counter }'\n",
-		},
-		Targets: TargetBlock{
-			{
-				Name:   "example",
-				Target: "http://localhost:8080/metrics.json",
+		URL:          "http://api.example.com",
+		Timeout:      10 * time.Second,
+		StaticLabels: map[string]string{"env": "prod"},
+		Client: &Client{
+			Headers: map[string]string{"X-Test": "test"},
+			BasicAuth: &BasicAuth{
+				Username: "user",
+				Password: "password",
 			},
 		},
-		ProbeTimeoutOffset: 1 * time.Second,
+		Mappings: []Mapping{
+			{
+				Metrics: []Metric{
+					{
+						Name:      "simple_metric",
+						Type:      "gauge",
+						ValuePath: ".value",
+					},
+				},
+				Arrays: []Array{
+					{
+						ItemsPath: ".items[*]",
+						Metrics: []Metric{
+							{
+								Name:   "item_info",
+								Type:   "gauge",
+								Value:  1,
+								Labels: map[string]string{"name": ".name"},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 	require.Equal(t, expected, args)
 }
 
 func TestAlloyConvert(t *testing.T) {
 	args := Arguments{
-		Config: alloytypes.OptionalSecret{
-			Value: "modules:\n  default:\n    metrics:\n      - name: example\n        path: '{ .counter }'\n",
-		},
-		Targets: TargetBlock{
+		URL: "http://api.example.com",
+		Mappings: []Mapping{
 			{
-				Name:   "example",
-				Target: "http://localhost:8080/metrics.json",
+				Metrics: []Metric{
+					{
+						Name:      "simple",
+						Type:      "gauge",
+						ValuePath: ".val",
+					},
+				},
+				Arrays: []Array{
+					{
+						ItemsPath: ".list",
+						Metrics: []Metric{
+							{
+								Name:  "list_item",
+								Type:  "counter",
+								Value: 1,
+							},
+						},
+					},
+				},
 			},
 		},
-		ProbeTimeoutOffset: 500 * time.Millisecond,
 	}
 
 	converted := args.Convert()
 
-	expected := &json_exporter.Config{
-		JSONConfig: util.RawYAML("modules:\n  default:\n    metrics:\n      - name: example\n        path: '{ .counter }'\n"),
-		JSONTargets: []json_exporter.JSONTarget{
-			{
-				Name:   "example",
-				Target: "http://localhost:8080/metrics.json",
-			},
-		},
-		ProbeTimeoutOffset: 0.5,
-	}
+	// Check struct directly through JSONModules
+	require.NotNil(t, converted.JSONModules)
+	cfg := converted.JSONModules
 
-	require.Equal(t, expected, converted)
+	module, ok := cfg.Modules["default"]
+	require.True(t, ok)
+
+	require.Len(t, module.Metrics, 2)
+
+	// Check simple metric
+	require.Equal(t, "simple", module.Metrics[0].Name)
+	require.Equal(t, ".val", module.Metrics[0].Path)
+	require.Equal(t, json_config.ValueScrape, module.Metrics[0].Type)
+	require.Equal(t, json_config.ValueTypeGauge, module.Metrics[0].ValueType)
+
+	// Check array metric
+	require.Equal(t, "list_item", module.Metrics[1].Name)
+	require.Equal(t, ".list", module.Metrics[1].Path)
+	require.Equal(t, json_config.ObjectScrape, module.Metrics[1].Type)
+	require.Equal(t, map[string]string{"value": "{1}"}, module.Metrics[1].Values)
 }
 
-func TestTargetsList(t *testing.T) {
-	alloyConfig := `
-		config = "modules:\n  default:\n    metrics:\n      - name: example\n        path: '{ .counter }'\n"
-		targets = [
-			{ "name" = "example1", "address" = "http://host1", "module" = "mod1", "extra" = "label" },
-		]
-	`
-	var args Arguments
-	err := syntax.Unmarshal([]byte(alloyConfig), &args)
-	require.NoError(t, err)
-
-	require.Len(t, args.TargetsList, 1)
-	require.Equal(t, "example1", args.TargetsList[0]["name"])
-	require.Equal(t, "http://host1", args.TargetsList[0]["address"])
-	require.Equal(t, "mod1", args.TargetsList[0]["module"])
-	require.Equal(t, "label", args.TargetsList[0]["extra"])
+func TestConvertClient(t *testing.T) {
+	args := Arguments{
+		URL: "http://test",
+		Client: &Client{
+			Headers: map[string]string{"Foo": "Bar"},
+			BasicAuth: &BasicAuth{
+				Username: "u",
+				Password: "p",
+			},
+		},
+	}
 
 	converted := args.Convert()
-	require.Len(t, converted.JSONTargets, 1)
-	require.Equal(t, "example1", converted.JSONTargets[0].Name)
-	require.Equal(t, "http://host1", converted.JSONTargets[0].Target)
-	require.Equal(t, "mod1", converted.JSONTargets[0].Module)
-	require.Equal(t, map[string]string{"extra": "label"}, converted.JSONTargets[0].Labels)
+	require.NotNil(t, converted.JSONModules)
+	cfg := converted.JSONModules
+
+	module := cfg.Modules["default"]
+	require.Equal(t, "Bar", module.Headers["Foo"])
+	require.Equal(t, "u", module.HTTPClientConfig.BasicAuth.Username)
+	require.Equal(t, "p", string(module.HTTPClientConfig.BasicAuth.Password))
 }
