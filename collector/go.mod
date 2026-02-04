@@ -69,11 +69,11 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 	go.opentelemetry.io/collector/component v1.49.0
-	go.opentelemetry.io/collector/confmap v1.49.0
+	go.opentelemetry.io/collector/confmap v1.51.0
 	go.opentelemetry.io/collector/confmap/provider/envprovider v1.48.0
 	go.opentelemetry.io/collector/confmap/provider/fileprovider v1.48.0
 	go.opentelemetry.io/collector/confmap/provider/httpprovider v1.48.0
-	go.opentelemetry.io/collector/confmap/provider/httpsprovider v1.45.0
+	go.opentelemetry.io/collector/confmap/provider/httpsprovider v1.51.0
 	go.opentelemetry.io/collector/confmap/provider/yamlprovider v1.48.0
 	go.opentelemetry.io/collector/connector v0.142.0
 	go.opentelemetry.io/collector/connector/forwardconnector v0.142.0
@@ -442,7 +442,7 @@ require (
 	github.com/go-resty/resty/v2 v2.16.5 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.9.3 // indirect
-	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
+	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/go-zookeeper/zk v1.0.4 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
@@ -600,7 +600,7 @@ require (
 	github.com/klauspost/pgzip v1.2.6 // indirect
 	github.com/knadh/koanf/maps v0.1.2 // indirect
 	github.com/knadh/koanf/providers/confmap v1.0.0 // indirect
-	github.com/knadh/koanf/v2 v2.3.0 // indirect
+	github.com/knadh/koanf/v2 v2.3.2 // indirect
 	github.com/kolo/xmlrpc v0.0.0-20220921171641-a4b6fa1dd06b // indirect
 	github.com/krallistic/kazoo-go v0.0.0-20170526135507-a15279744f4e // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
@@ -746,6 +746,7 @@ require (
 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
 	github.com/prometheus-community/elasticsearch_exporter v1.5.0 // indirect
 	github.com/prometheus-community/go-runit v0.1.0 // indirect
+	github.com/prometheus-community/json_exporter v0.7.0 // indirect
 	github.com/prometheus-community/postgres_exporter v0.18.1 // indirect
 	github.com/prometheus-community/prom-label-proxy v0.12.1 // indirect
 	github.com/prometheus-community/stackdriver_exporter v0.18.0 // indirect
@@ -899,7 +900,7 @@ require (
 	go.opentelemetry.io/collector/extension/extensionmiddleware v0.142.0 // indirect
 	go.opentelemetry.io/collector/extension/extensiontest v0.142.0 // indirect
 	go.opentelemetry.io/collector/extension/xextension v0.142.0 // indirect
-	go.opentelemetry.io/collector/featuregate v1.49.0 // indirect
+	go.opentelemetry.io/collector/featuregate v1.51.0 // indirect
 	go.opentelemetry.io/collector/filter v0.142.0 // indirect
 	go.opentelemetry.io/collector/internal/fanoutconsumer v0.142.0 // indirect
 	go.opentelemetry.io/collector/internal/memorylimiter v0.142.0 // indirect

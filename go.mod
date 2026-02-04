@@ -249,7 +249,7 @@ require (
 	go.opentelemetry.io/collector/config/configretry v1.48.0
 	go.opentelemetry.io/collector/config/configtelemetry v0.142.0
 	go.opentelemetry.io/collector/config/configtls v1.48.0
-	go.opentelemetry.io/collector/confmap v1.49.0
+	go.opentelemetry.io/collector/confmap v1.51.0
 	go.opentelemetry.io/collector/confmap/provider/yamlprovider v1.48.0
 	go.opentelemetry.io/collector/confmap/xconfmap v0.143.0
 	go.opentelemetry.io/collector/connector v0.142.0
@@ -265,7 +265,7 @@ require (
 	go.opentelemetry.io/collector/extension/extensionauth v1.48.0
 	go.opentelemetry.io/collector/extension/extensiontest v0.142.0
 	go.opentelemetry.io/collector/extension/xextension v0.142.0
-	go.opentelemetry.io/collector/featuregate v1.49.0
+	go.opentelemetry.io/collector/featuregate v1.51.0
 	go.opentelemetry.io/collector/otelcol v0.142.0
 	go.opentelemetry.io/collector/pdata v1.49.0
 	go.opentelemetry.io/collector/pipeline v1.49.0
@@ -617,7 +617,7 @@ require (
 	github.com/go-openapi/swag/yamlutils v0.25.1 // indirect
 	github.com/go-openapi/validate v0.25.0 // indirect
 	github.com/go-resty/resty/v2 v2.16.5 // indirect
-	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
+	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/go-zookeeper/zk v1.0.4 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
@@ -723,7 +723,7 @@ require (
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/klauspost/pgzip v1.2.6 // indirect
 	github.com/knadh/koanf v1.5.0 // indirect
-	github.com/knadh/koanf/v2 v2.3.0 // indirect
+	github.com/knadh/koanf/v2 v2.3.2 // indirect
 	github.com/kolo/xmlrpc v0.0.0-20220921171641-a4b6fa1dd06b // indirect
 	github.com/krallistic/kazoo-go v0.0.0-20170526135507-a15279744f4e // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
@@ -1017,6 +1017,7 @@ require (
 require (
 	buf.build/gen/go/parca-dev/parca/grpc/go v1.6.0-20251203114737-dab2f094ec25.1
 	buf.build/gen/go/parca-dev/parca/protocolbuffers/go v1.36.11-20251203114737-dab2f094ec25.1
+	github.com/prometheus-community/json_exporter v0.7.0
 )
 
 require (
@@ -1028,6 +1029,10 @@ require (
 	github.com/go-playground/validator/v10 v10.26.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.31 // indirect
+	go.opentelemetry.io/collector/confmap/provider/envprovider v1.48.0 // indirect
+	go.opentelemetry.io/collector/confmap/provider/fileprovider v1.48.0 // indirect
+	go.opentelemetry.io/collector/confmap/provider/httpprovider v1.48.0 // indirect
+	go.opentelemetry.io/collector/confmap/provider/httpsprovider v1.51.0 // indirect
 )
 
 // Add exclude directives so Go doesn't pick old incompatible k8s.io/client-go

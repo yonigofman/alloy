@@ -1,0 +1,19 @@
+prometheus.exporter.json "example" {
+	config = "modules:\n  default:\n    metrics:\n      - name: app_info\n        type: object\n        path: '{.items}'\n        help: 'App status info'\n        labels:\n          app_name: '{.app_name}'\n          health_status: '{.health_status}'\n          sync_status: '{.sync_status}'\n          namespace: '{.namespace}'\n        values:\n          info: '{1}'\n"
+
+	target {
+		name    = "example"
+		address = "http://localhost:8080/metrics.json"
+	}
+}
+
+prometheus.scrape "json_example" {
+	targets    = prometheus.exporter.json.example.targets
+	forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.remote_write "default" {
+	endpoint {
+		url = "http://localhost:9090/api/v1/write"
+	}
+}

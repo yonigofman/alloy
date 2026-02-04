@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "app_name": "service-b",
+      "health_status": "Healthy",
+      "sync_status": "Synced",
+      "namespace": "product-np"
+    },
+    {
+      "app_name": "service-a",
+      "health_status": "Healthy",
+      "sync_status": "Synced",
+      "namespace": "product-np"
+    }
+  ]
+}
